@@ -1,0 +1,38 @@
+name: Deploy SecInfo.IA (SecInfo Hosting for AI explotation)
+
+on:
+  push:
+    branches:
+      - main
+
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout do código
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+
+      - name: Instalar dependências e Build (Front-end)
+        run: |
+          cd client
+          npm install
+          npm run build
+
+      - name: Deploy para OCI (SCP)
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.OCI_HOST }}
+          username: ${{ secrets.OCI_USERNAME }}
+          key: ${{ secrets.OCI_SSH_KEY }}
+          source: "client/dist/*" # <-- Atualizado para buscar de dentro do client
+          target: "/var/www/html/secinfo-ia"
+          strip_components: 2 # <-- Mudou para 2 para remover as pastas 'client' e 'dist' do caminho final
