@@ -19,7 +19,8 @@ export default function Terminal() {
     let index = 0;
     const interval = setInterval(() => {
       if (index < mockLogs.length) {
-        setLogs((prev) => [...prev, mockLogs[index]]);
+        const currentLog = mockLogs[index];
+        setLogs((prev) => [...prev, currentLog]);
         index++;
       } else {
         clearInterval(interval);
