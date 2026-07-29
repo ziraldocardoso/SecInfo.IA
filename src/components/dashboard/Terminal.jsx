@@ -14,6 +14,27 @@ const mockLogs = [
 export default function Terminal() {
   const [logs, setLogs] = useState([]);
   const bottomRef = useRef(null);
+  const [height, setHeight] = useState(192);
+
+  const handleMouseDown = (e) => {
+    e.preventDefault();
+    const startY = e.clientY;
+    const startHeight = height;
+
+    const handleMouseMove = (moveEvent) => {
+      const deltaY = startY - moveEvent.clientY;
+      const newHeight = Math.max(100, Math.min(startHeight + deltaY, window.innerHeight - 100));
+      setHeight(newHeight);
+    };
+
+    const handleMouseUp = () => {
+      document.removeEventListener('mousemove', handleMouseMove);
+      document.removeEventListener('mouseup', handleMouseUp);
+    };
+
+    document.addEventListener('mousemove', handleMouseMove);
+    document.addEventListener('mouseup', handleMouseUp);
+  };
 
   useEffect(() => {
     let index = 0;
@@ -37,8 +58,14 @@ export default function Terminal() {
   }, [logs]);
 
   return (
-    <div className="h-48 border-t border-[hsl(var(--primary)/0.5)] bg-black flex flex-col scanline">
-      <div className="px-4 py-1 border-b border-[hsl(var(--primary)/0.2)] bg-[hsl(var(--primary)/0.05)] flex justify-between items-center">
+    <div 
+      className="border-t border-[hsl(var(--primary)/0.5)] bg-black flex flex-col scanline"
+      style={{ height: `${height}px` }}
+    >
+      <div 
+        className="px-4 py-1 border-b border-[hsl(var(--primary)/0.2)] bg-[hsl(var(--primary)/0.05)] flex justify-between items-center cursor-row-resize select-none"
+        onMouseDown={handleMouseDown}
+      >
         <span className="text-[hsl(var(--primary))] font-mono text-xs tracking-widest uppercase">Console Output //</span>
         <div className="flex gap-1">
           <div className="w-2 h-2 bg-white/20"></div>

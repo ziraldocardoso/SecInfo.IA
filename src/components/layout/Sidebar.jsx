@@ -34,8 +34,8 @@ export default function Sidebar() {
         </ul>
       </nav>
       <div className="p-4 border-t border-[hsl(var(--primary)/0.3)] mt-auto">
-        <div className="danger-border bg-[hsl(var(--danger)/0.1)] p-3 text-center cursor-pointer hover:bg-[hsl(var(--danger))] hover:text-black transition-colors duration-0">
-          <span className="uppercase text-xs font-bold tracking-widest text-[hsl(var(--danger))] group-hover:text-black">
+        <div className="group danger-border bg-[hsl(var(--danger)/0.1)] p-3 text-center cursor-pointer hover:bg-[hsl(var(--danger))] transition-colors duration-0">
+          <span className="uppercase text-xs font-bold tracking-widest text-[hsl(var(--danger))] group-hover:text-white">
             Emergency Halt
           </span>
         </div>
