@@ -3,36 +3,40 @@ name: Deploy SecInfo.IA (SecInfo Hosting for AI explotation)
 on:
   push:
     branches:
-      - main
-
-env:
-  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+      - main # Dispara o deploy ao atualizar a branch principal
 
 jobs:
   build-and-deploy:
+    name: Build and Deploy to OCI
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout do código
+      - name: 🛎️ Checkout do código
         uses: actions/checkout@v4
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
+      - name: 🥟 Setup Bun
+        uses: oven-sh/setup-bun@v1
         with:
-          node-version: '24'
+          bun-version: latest
 
-      - name: Instalar dependências e Build (Front-end)
+      - name: 📦 Instalar dependências
+        run: bun install --frozen-lockfile
+
+      - name: 🛠️ Build do projeto (Vite)
+        # O Vite gera os arquivos otimizados na pasta padrão 'dist/'
+        run: bun run build
+
+      - name: 🔐 Configurar Autenticação SSH
+        uses: webfactory/ssh-agent@v0.9.0
+        with:
+          ssh-private-key: ${{ secrets.OCI_SSH_PRIVATE_KEY }}
+
+      - name: 🚀 Deploy via Rsync para OCI
         run: |
-          cd client
-          npm install
-          npm run build
-
-      - name: Deploy para OCI (SCP)
-        uses: appleboy/scp-action@v0.1.7
-        with:
-          host: ${{ secrets.OCI_HOST }}
-          username: ${{ secrets.OCI_USERNAME }}
-          key: ${{ secrets.OCI_SSH_KEY }}
-          source: "client/dist/*" # <-- Atualizado para buscar de dentro do client
-          target: "/var/www/html/secinfo-ia"
-          strip_components: 2 # <-- Mudou para 2 para remover as pastas 'client' e 'dist' do caminho final
+          # Cria o diretório .ssh e adiciona o IP da OCI aos hosts conhecidos para evitar prompts de confirmação
+          mkdir -p ~/.ssh
+          ssh-keyscan -H ${{ secrets.OCI_HOST }} >> ~/.ssh/known_hosts
+          
+          # Sincroniza a pasta dist/ local com o diretório remoto.
+          # A flag --delete garante que arquivos antigos sejam apagados no servidor se não existirem mais no build atual.
+          rsync -avz --delete ./dist/ ${{ secrets.OCI_USER }}@${{ secrets.OCI_HOST }}:${{ secrets.OCI_TARGET_DIR }}
