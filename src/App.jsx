@@ -24,12 +24,10 @@ function App() {
     "[SYS] System ready. Awaiting commands..."
   ]);
   
-  // Ref para rastrear se é o primeiro render para evitar logs duplicados de montagem
   const isInitialMount = useRef(true);
 
   const activeService = SERVICES.find(s => s.id === activeTabId);
 
-  // Log on tab change
   useEffect(() => {
     if (isInitialMount.current) {
       isInitialMount.current = false;
@@ -45,7 +43,6 @@ function App() {
     }
   }, [activeTabId]);
 
-  // Controle global dos timers de emergência e logs de emergência
   useEffect(() => {
     if (emergencyPhase === 'STOPPING') {
       setLogs(prev => [
@@ -72,8 +69,6 @@ function App() {
       return () => clearTimeout(timer);
       
     } else if (emergencyPhase === 'NONE' && !isInitialMount.current) {
-      // Evita o log de "NONE" no boot do sistema (já que inicializa em NONE)
-      // Só avisa a retomada caso já tenhamos passado pela emergência
       setLogs(prev => [
         ...prev, 
         `[SYS] Emergency protocol lifted. Safety clearance granted.`,
@@ -112,7 +107,7 @@ function App() {
     let timeoutId;
 
     const scheduleUfo = () => {
-      const nextUfoTime = Math.floor(Math.random() * 300000); // 0 to 5 minutes
+      const nextUfoTime = Math.floor(Math.random() * 300000);
       
       timeoutId = setTimeout(() => {
         const randomTop = Math.floor(Math.random() * 80) + 10;
@@ -136,7 +131,7 @@ function App() {
     let timeoutId;
 
     const scheduleHacker = () => {
-      const nextHackerTime = Math.floor(Math.random() * 300000); // 0 to 5 minutes
+      const nextHackerTime = Math.floor(Math.random() * 300000);
       
       timeoutId = setTimeout(() => {
         setHackerVisible(true);
@@ -159,7 +154,6 @@ function App() {
 
   return (
     <div className={`h-screen w-screen overflow-hidden bg-black flex flex-col font-sans selection:bg-[hsl(var(--primary)/0.3)] text-white ${isFailing ? 'tv-fail-effect' : ''}`}>
-      {/* Mobile Blocker */}
       <div className="fixed inset-0 z-[9999] bg-black text-white flex flex-col items-center justify-center p-8 text-center md:hidden crt-flicker">
         <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="hsl(var(--danger))" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="mb-6 opacity-80">
           <rect x="5" y="2" width="14" height="20" rx="2" ry="2"></rect>
@@ -190,12 +184,9 @@ function App() {
           </svg>
         </div>
       )}
-      {/* Top Navigation Bar */}
       <Topbar onLog={addLog} />
 
-      {/* Main Content Area */}
       <div className="flex-1 flex overflow-hidden">
-        {/* Left Sidebar */}
         <Sidebar 
           services={SERVICES} 
           activeTabId={activeTabId} 
@@ -205,7 +196,6 @@ function App() {
           emergencyPhase={emergencyPhase}
         />
 
-        {/* Workspace + Terminal Vertical Stack */}
         <div className="flex-1 flex flex-col overflow-hidden relative">
           <Workspace activeService={activeService} emergencyPhase={emergencyPhase} onLog={addLog} />
           <Terminal logs={logs} />

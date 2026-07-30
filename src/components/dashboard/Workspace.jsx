@@ -47,7 +47,6 @@ const generateInstanceDetails = (inst) => {
     };
   }
 
-  // Extrai números finais do ID para gerar dados determinísticos (consistentes para a mesma instância)
   const seed = inst.id.split('-').pop() || '0000';
   const idNum = parseInt(seed, 10) || 0;
 
@@ -78,7 +77,6 @@ export default function Workspace({ activeService, emergencyPhase, onLog }) {
   const [selectedInstance, setSelectedInstance] = useState(null);
   const [mlActivated, setMlActivated] = useState(false);
 
-  // Sync state changes pushed by Emergency Halt Phase
   useEffect(() => {
     if (emergencyPhase === 'STOPPING') {
       setInstances(prev => prev.map(inst => 
@@ -91,9 +89,7 @@ export default function Workspace({ activeService, emergencyPhase, onLog }) {
     }
   }, [emergencyPhase]);
 
-  // Normal dynamics interval
   useEffect(() => {
-    // Only run normal intervals if we are on the active tab (id 1) and not in an emergency
     if (!activeService || activeService.id !== 1) return;
     if (emergencyPhase !== 'NONE') return;
 
@@ -119,12 +115,10 @@ export default function Workspace({ activeService, emergencyPhase, onLog }) {
     };
   }, [activeService, emergencyPhase]);
 
-  // Generate halted instances for inactive tabs
   const haltedInstances = useMemo(() => {
     if (activeService?.id === 1) return [];
     const prefix = activeService?.name?.toLowerCase().replace(/[^a-z0-9]/g, '') || 'node';
     
-    // Varia a quantidade de nós de forma pseudo-aleatória baseada no ID do serviço (entre 2 e 5)
     const length = ((activeService?.id || 1) * 3) % 4 + 2;
     
     return Array.from({ length }).map((_, i) => ({
@@ -250,7 +244,6 @@ export default function Workspace({ activeService, emergencyPhase, onLog }) {
         </div>
       </div>
 
-      {/* Instance Details Modal */}
       {selectedInstance && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/80 backdrop-blur-sm">
           <div className="bg-black border border-[hsl(var(--primary))] p-8 max-w-3xl w-full relative crt-flicker shadow-[0_0_50px_rgba(0,240,255,0.1)]">

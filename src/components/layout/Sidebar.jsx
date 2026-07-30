@@ -48,7 +48,6 @@ export default function Sidebar({ services, activeTabId, setActiveTabId, onEmerg
         </div>
       </aside>
 
-      {/* Confirmation Modal */}
       {showConfirm && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/80 backdrop-blur-sm">
           <div className="bg-black border border-[hsl(var(--danger))] p-6 max-w-md w-full relative crt-flicker">

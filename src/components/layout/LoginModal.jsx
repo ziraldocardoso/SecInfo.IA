@@ -4,17 +4,15 @@ export default function LoginModal({ onClose }) {
   const [tenant, setTenant] = useState('');
   const [username, setUsername] = useState('operador_ia');
   const [password, setPassword] = useState('**********');
-  const [step, setStep] = useState(1); // 1: Tenant, 2: Login
+  const [step, setStep] = useState(1);
   const [errorMessage, setErrorMessage] = useState('');
 
   return (
     <>
       <div className="fixed inset-0 z-[200] flex items-center justify-center bg-black/60 backdrop-blur-sm font-sans" style={{ color: '#161514' }}>
         <div className="bg-white w-[500px] shadow-[0_10px_30px_rgba(0,0,0,0.5)] rounded-sm overflow-hidden flex flex-col relative">
-          {/* OCI Header style */}
           <div className="bg-[#161514] p-4 flex items-center justify-between border-b-4 border-[#C74634]">
             <div className="flex items-center gap-2">
-              {/* Mock Oracle Cloud Logo */}
               <svg width="160" height="24" viewBox="0 0 160 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path d="M12 2C6.48 2 2 6.48 2 12C2 17.52 6.48 22 12 22C17.52 22 22 17.52 22 12C22 6.48 17.52 2 12 2ZM12 18C8.69 18 6 15.31 6 12C6 8.69 8.69 6 12 6C15.31 6 18 8.69 18 12C18 15.31 15.31 18 12 18Z" fill="#C74634"/>
                 <text x="28" y="18" fill="white" fontSize="18" fontFamily="Arial, sans-serif" fontWeight="bold" letterSpacing="-0.5">ORACLE</text>
@@ -24,7 +22,6 @@ export default function LoginModal({ onClose }) {
             <button onClick={onClose} className="text-white/50 hover:text-white cursor-pointer text-2xl leading-none">&times;</button>
           </div>
 
-          {/* Body */}
           <div className="p-8 bg-white text-[#161514]">
             <h2 className="text-3xl font-light mb-6 text-[#161514]">Sign In</h2>
             
@@ -103,7 +100,6 @@ export default function LoginModal({ onClose }) {
         </div>
       </div>
 
-      {/* Error Message Modal overlay */}
       {errorMessage && (
         <div className="fixed inset-0 z-[210] flex items-center justify-center bg-black/40 backdrop-blur-sm">
           <div className="bg-white border-t-4 border-[#C74634] w-[400px] shadow-2xl flex flex-col rounded-sm overflow-hidden animate-in fade-in zoom-in-95 duration-200">
