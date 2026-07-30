@@ -24,7 +24,7 @@ export default function Topbar({ onLog }) {
           <div className="hidden sm:flex items-center gap-2 text-xs uppercase tracking-widest text-white/70">
             <span className="text-[hsl(var(--primary))] uppercase text-[10px] tracking-widest">Region / Cloud Tenant:</span>
             <span className="font-mono bg-[hsl(var(--primary)/0.1)] px-2 py-0.5 border border-[hsl(var(--primary)/0.2)]">Neo-Alagoas</span>
-            <span className="ml-2 bg-[hsl(var(--danger))] text-black px-2 py-0.5 font-bold animate-pulse">Avaliação NÃO iniciada!</span>
+            <span className="ml-2 bg-[hsl(var(--success))] text-black px-2 py-0.5 font-bold animate-pulse">Avaliação iniciada!</span>
             <span className="ml-2 font-mono bg-[hsl(var(--primary)/0.1)] px-2 py-0.5 border border-[hsl(var(--primary)/0.2)]">IA Aplicada à Segurança da Informação</span>
           </div>
         </div>
