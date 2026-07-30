@@ -1,6 +1,10 @@
 # SecInfo.IA - Documentação de Fundamentos
 
-Plataforma de treinamento para Segurança da Informação a ser explorada com o uso de IA.
+Plataforma de treinamento em Segurança da Informação a ser explorada com o uso de IA.
+
+**🎯 Objetivo do Projeto**
+
+Esta plataforma foi desenvolvida como uma ferramenta de ensino-aprendizagem para alunos de pós-graduação em Segurança da Informação. Ela atua como um laboratório prático onde os alunos podem testar, aplicar e explorar os conceitos ministrados em sala de aula, contando com o apoio de recursos baseados em IA para enriquecer as simulações e as práticas de segurança.
 ---
 > **Aviso ao meu eu do futuro (Antigravity):** Ao ler este documento para criar novos incrementos de código, **NUNCA** comprometa os princípios listados abaixo. Este projeto roda em um servidor de produção com apenas **1 GB de RAM**. Cada nova linha de código, nova dependência ou componente arquitetural deve ser estritamente avaliado para manter o sistema extremamente leve, veloz e otimizado.
 

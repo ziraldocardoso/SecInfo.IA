@@ -1,18 +1,6 @@
 import React, { useEffect, useState, useRef } from 'react';
 
-const mockLogs = [
-  "[SYS] Initializing core modules...",
-  "[OK]  Module 'Neurolink' loaded.",
-  "[WARN] High latency detected on Node i-99f01a.",
-  "[SYS] Rerouting traffic through proxy-7...",
-  "[OK]  Traffic rerouted successfully.",
-  "[SEC] Analyzing inbound packet stream...",
-  "[OK]  No anomalies detected in the last 60s.",
-  "[SYS] Awaiting next command input_",
-];
-
-export default function Terminal() {
-  const [logs, setLogs] = useState([]);
+export default function Terminal({ logs = [] }) {
   const bottomRef = useRef(null);
   const [height, setHeight] = useState(192);
 
@@ -35,21 +23,6 @@ export default function Terminal() {
     document.addEventListener('mousemove', handleMouseMove);
     document.addEventListener('mouseup', handleMouseUp);
   };
-
-  useEffect(() => {
-    let index = 0;
-    const interval = setInterval(() => {
-      if (index < mockLogs.length) {
-        const currentLog = mockLogs[index];
-        setLogs((prev) => [...prev, currentLog]);
-        index++;
-      } else {
-        clearInterval(interval);
-      }
-    }, 800);
-
-    return () => clearInterval(interval);
-  }, []);
 
   useEffect(() => {
     if (bottomRef.current) {
@@ -80,12 +53,10 @@ export default function Terminal() {
             {log}
           </div>
         ))}
-        {logs.length === mockLogs.length && (
-          <div className="text-[hsl(var(--success))] crt-flicker">
-            <span className="opacity-50 mr-2">{`>`}</span>
-            <span className="inline-block w-2 h-4 bg-[hsl(var(--success))] align-middle ml-1"></span>
-          </div>
-        )}
+        <div className="text-[hsl(var(--success))] crt-flicker mt-2">
+          <span className="opacity-50 mr-2">{`>`}</span>
+          <span className="inline-block w-2 h-4 bg-[hsl(var(--success))] align-middle ml-1"></span>
+        </div>
         <div ref={bottomRef} />
       </div>
     </div>
