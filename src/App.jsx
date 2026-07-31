@@ -198,7 +198,7 @@ function App() {
 
         <div className="flex-1 flex flex-col overflow-hidden relative">
           <Workspace activeService={activeService} emergencyPhase={emergencyPhase} onLog={addLog} />
-          <Terminal logs={logs} />
+          <Terminal logs={logs} onLog={addLog} />
         </div>
       </div>
     </div>

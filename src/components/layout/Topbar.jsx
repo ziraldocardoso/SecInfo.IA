@@ -9,7 +9,6 @@ export default function Topbar({ onLog }) {
     const interval = setInterval(() => {
       setLatency(Math.floor(Math.random() * 205) + 1);
     }, 2000);
-
     return () => clearInterval(interval);
   }, []);
 
