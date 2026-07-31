@@ -44,4 +44,4 @@ jobs:
           scp ./ws-server.js ${{ secrets.OCI_USER }}@${{ secrets.OCI_HOST }}:${{ secrets.OCI_TARGET_DIR }}/ws-server.js
           
           # Reinicia o serviço do sistema para rodar o código mais novo do WebSocket
-          ssh ${{ secrets.OCI_USER }}@${{ secrets.OCI_HOST }} "systemctl restart secinfo-ws"
+          ssh ${{ secrets.OCI_USER }}@${{ secrets.OCI_HOST }} "sudo systemctl restart secinfo-ws"
