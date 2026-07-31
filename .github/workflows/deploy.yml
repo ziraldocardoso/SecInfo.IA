@@ -37,8 +37,8 @@ jobs:
           mkdir -p ~/.ssh
           ssh-keyscan -H ${{ secrets.OCI_HOST }} >> ~/.ssh/known_hosts
           
-          # Sincroniza a pasta dist/ e apaga arquivos velhos (mas ignora o ws-server.js para não ser deletado)
-          rsync -avz --delete --exclude 'ws-server.js' ./dist/ ${{ secrets.OCI_USER }}@${{ secrets.OCI_HOST }}:${{ secrets.OCI_TARGET_DIR }}
+          # Sincroniza a pasta dist/ e apaga arquivos velhos (mas ignora arquivos soltos cruciais)
+          rsync -avz --delete --exclude 'ws-server.js' --exclude '*.log' --exclude 'anomaly_model.json' ./dist/ ${{ secrets.OCI_USER }}@${{ secrets.OCI_HOST }}:${{ secrets.OCI_TARGET_DIR }}
           
           # Copia o nosso servidor WebSocket para a mesma pasta no servidor
           scp ./ws-server.js ${{ secrets.OCI_USER }}@${{ secrets.OCI_HOST }}:${{ secrets.OCI_TARGET_DIR }}/ws-server.js
