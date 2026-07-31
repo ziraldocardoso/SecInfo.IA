@@ -1,18 +1,15 @@
 import React, { useState, useEffect, useMemo } from 'react';
 
-const STATES = ['RUNNING', 'STARTING', 'STOPPED', 'STOPPING', 'PROVISIONING', 'TERMINATING', 'TERMINATED'];
-
-const getRandomState = () => STATES[Math.floor(Math.random() * STATES.length)];
-const getRandomCpu = (max) => `${Math.floor(Math.random() * max) + 1}%`;
+const getRandomCpu = (min, max) => `${Math.floor(Math.random() * (max - min + 1)) + min}%`;
 
 const INITIAL_INSTANCES = [
-  { id: 'instance-20260731-0358', type: 'BM.Standard.A1', state: getRandomState(), ip: '141.33.17.188', cpu: getRandomCpu(98) },
-  { id: 'instance-20260730-0240', type: 'VM.Standard.A1.Flex', state: getRandomState(), ip: '142.33.17.99', cpu: getRandomCpu(98) },
-  { id: 'instance-20260731-0255', type: 'VM.Standard.A2.Flex', state: getRandomState(), ip: '143.33.18.88', cpu: getRandomCpu(98) },
-  { id: 'instance-20260729-0233', type: 'VM.Standard.E2.1.Micro', state: 'RUNNING', ip: '144.33.15.227', cpu: getRandomCpu(5) },
-  { id: 'instance-20260801-0199', type: 'VM.Standard.E4.Flex', state: getRandomState(), ip: '142.33.11.101', cpu: getRandomCpu(98) },
-  { id: 'instance-20260730-0200', type: 'VM.Standard.E6.Ax.Flex', state: getRandomState(), ip: '146.31.15.169', cpu: getRandomCpu(98) },
-  { id: 'instance-20260727-0777', type: 'VM.Optimized3.Flex', state: getRandomState(), ip: '148.25.19.254', cpu: getRandomCpu(98) },
+  { id: 'instance-20260731-0358', type: 'BM.Standard.A1', state: 'RUNNING', ip: '141.33.17.188', cpu: getRandomCpu(70, 90) },
+  { id: 'instance-20260730-0240', type: 'VM.Standard.A1.Flex', state: 'RUNNING', ip: '142.33.17.99', cpu: getRandomCpu(1, 25) },
+  { id: 'instance-20260731-0255', type: 'VM.Standard.A2.Flex', state: 'RUNNING', ip: '143.33.18.88', cpu: getRandomCpu(1, 25) },
+  { id: 'instance-20260729-0233', type: 'VM.Standard.E2.1.Micro', state: 'RUNNING', ip: '144.33.15.227', cpu: getRandomCpu(1, 25) },
+  { id: 'instance-20260801-0199', type: 'VM.Standard.E4.Flex', state: 'RUNNING', ip: '142.33.11.101', cpu: getRandomCpu(1, 25) },
+  { id: 'instance-20260730-0200', type: 'VM.Standard.E6.Ax.Flex', state: 'RUNNING', ip: '146.31.15.169', cpu: getRandomCpu(1, 25) },
+  { id: 'instance-20260727-0777', type: 'VM.Optimized3.Flex', state: 'RUNNING', ip: '148.25.19.254', cpu: getRandomCpu(1, 25) },
 ];
 
 const getStateStyle = (state) => {
@@ -93,24 +90,16 @@ export default function Workspace({ activeService, emergencyPhase, onLog }) {
     if (!activeService || activeService.id !== 1) return;
     if (emergencyPhase !== 'NONE') return;
 
-    const stateInterval = setInterval(() => {
-      setInstances(prev => prev.map(inst => {
-        if (inst.id === 'instance-20260729-0233') return inst;
-        return { ...inst, state: getRandomState() };
-      }));
-    }, 55000);
-
     const cpuInterval = setInterval(() => {
       setInstances(prev => prev.map(inst => {
-        if (inst.id === 'instance-20260729-0233') {
-          return { ...inst, cpu: getRandomCpu(5) };
+        if (inst.id === 'instance-20260731-0358') {
+          return { ...inst, cpu: getRandomCpu(70, 90) };
         }
-        return { ...inst, cpu: getRandomCpu(98) };
+        return { ...inst, cpu: getRandomCpu(1, 25) };
       }));
     }, 40000);
 
     return () => {
-      clearInterval(stateInterval);
       clearInterval(cpuInterval);
     };
   }, [activeService, emergencyPhase]);
