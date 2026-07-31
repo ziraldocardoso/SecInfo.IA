@@ -25,7 +25,7 @@ export default function Terminal({ logs = [], onLog }) {
         if (data.ip && !ipRef.current) {
           ipRef.current = data.ip;
           if (onLog) {
-            const msg = `[NET] Active connection from IP: ${data.ip}`;
+            const msg = `[NET] Your client connection IP: ${data.ip}`;
             onLog(msg); // Log imediato na conexão
             intervalRef.current = setInterval(() => {
               onLog(msg);
