@@ -10,7 +10,9 @@ export default function Terminal({ logs = [], onLog }) {
   useEffect(() => {
     const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
     const host = window.location.hostname;
-    const wsUrl = import.meta.env.VITE_WS_URL || `${protocol}//${host}:3001`;
+    // Em dev usa porta 3001. Em prod (Nginx), usa o path /ws para evitar bloqueios de porta/SSL.
+    const wsUrl = import.meta.env.VITE_WS_URL || 
+      (import.meta.env.PROD ? `${protocol}//${host}/ws` : `${protocol}//${host}:3001`);
     
     const ws = new WebSocket(wsUrl);
 

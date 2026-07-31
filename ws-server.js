@@ -3,7 +3,8 @@ const PORT = process.env.WS_PORT || 3001;
 const server = Bun.serve({
   port: PORT,
   fetch(req, server) {
-    const ip = server.requestIP(req)?.address || "127.0.0.1";
+    // Ao usar Nginx, o IP real vem nos headers. Caso contrário, usa o IP da conexão direta.
+    const ip = req.headers.get("x-real-ip") || req.headers.get("x-forwarded-for") || server.requestIP(req)?.address || "127.0.0.1";
     // Tenta atualizar a requisição HTTP para WebSocket
     if (server.upgrade(req, { data: { ip } })) {
       return; // upgrade bem-sucedido, não retorna uma resposta HTTP
