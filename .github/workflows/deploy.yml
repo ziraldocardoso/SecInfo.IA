@@ -37,6 +37,11 @@ jobs:
           mkdir -p ~/.ssh
           ssh-keyscan -H ${{ secrets.OCI_HOST }} >> ~/.ssh/known_hosts
           
-          # Sincroniza a pasta dist/ local com o diretório remoto.
-          # A flag --delete garante que arquivos antigos sejam apagados no servidor se não existirem mais no build atual.
-          rsync -avz --delete ./dist/ ${{ secrets.OCI_USER }}@${{ secrets.OCI_HOST }}:${{ secrets.OCI_TARGET_DIR }}
+          # Sincroniza a pasta dist/ e apaga arquivos velhos (mas ignora o ws-server.js para não ser deletado)
+          rsync -avz --delete --exclude 'ws-server.js' ./dist/ ${{ secrets.OCI_USER }}@${{ secrets.OCI_HOST }}:${{ secrets.OCI_TARGET_DIR }}
+          
+          # Copia o nosso servidor WebSocket para a mesma pasta no servidor
+          scp ./ws-server.js ${{ secrets.OCI_USER }}@${{ secrets.OCI_HOST }}:${{ secrets.OCI_TARGET_DIR }}/ws-server.js
+          
+          # Reinicia o serviço do sistema para rodar o código mais novo do WebSocket
+          ssh ${{ secrets.OCI_USER }}@${{ secrets.OCI_HOST }} "systemctl restart secinfo-ws"
