@@ -309,18 +309,18 @@ export default function Workspace({ activeService, emergencyPhase, onLog, onEmer
                           // Threat Artifact Detected
                         </span>
                         <a 
-                          href={selectedInstance.state === 'STOPPED' ? undefined : "/audit_dump.log"}
-                          download={selectedInstance.state === 'STOPPED' ? undefined : "audit_dump.log"}
+                          href={selectedInstance.state !== 'RUNNING' ? undefined : "/audit_dump.log"}
+                          download={selectedInstance.state !== 'RUNNING' ? undefined : "audit_dump.log"}
                           onClick={(e) => {
-                            if (selectedInstance.state === 'STOPPED') {
+                            if (selectedInstance.state !== 'RUNNING') {
                               e.preventDefault();
-                              if (onLog) onLog(`[ERR] Operation failed: Target instance is currently OFFLINE.`);
+                              if (onLog) onLog(`[ERR] Operation failed: Target instance is not RUNNING.`);
                               return;
                             }
                             if (onLog) onLog(`[SEC-CRITICAL] Malicious payload downloaded from target: ${selectedInstance.id}`);
                           }}
                           className={`inline-flex items-center gap-2 px-3 py-1.5 text-xs font-bold transition-colors ${
-                            selectedInstance.state === 'STOPPED'
+                            selectedInstance.state !== 'RUNNING'
                               ? 'bg-[hsl(var(--danger)/0.05)] border border-[hsl(var(--danger)/0.3)] text-[hsl(var(--danger)/0.5)] cursor-not-allowed'
                               : 'bg-[hsl(var(--danger)/0.1)] border border-[hsl(var(--danger))] text-[hsl(var(--danger))] hover:bg-[hsl(var(--danger))] hover:text-black cursor-pointer'
                           }`}
