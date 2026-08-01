@@ -214,7 +214,7 @@ export default function Workspace({ activeService, emergencyPhase, onLog }) {
                     </span>
                   </td>
                   <td className="px-4 py-3 text-white/60">{inst.ip}</td>
-                  <td className="px-4 py-3 text-white/60">{inst.cpu}</td>
+                  <td className="px-4 py-3 text-white/60">{inst.state === 'STOPPED' ? '0%' : inst.cpu}</td>
                   <td className="px-4 py-3">
                     <button 
                       onClick={() => {
