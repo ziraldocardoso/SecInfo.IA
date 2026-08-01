@@ -204,7 +204,26 @@ export default function Workspace({ activeService, emergencyPhase, onLog }) {
             <tbody>
               {displayInstances.map((inst) => (
                 <tr key={inst.id} className="border-b border-[hsl(var(--primary)/0.1)] hover:bg-[hsl(var(--primary)/0.05)] transition-colors">
-                  <td className={`px-4 py-3 ${inst.id === 'instance-20260731-0358' ? 'text-[#ff9999] drop-shadow-[0_0_5px_rgba(255,0,0,0.8)]' : 'text-white/90'}`}>
+                  <td className={`px-4 py-3 flex items-center gap-2 ${inst.id === 'instance-20260731-0358' ? 'text-[#ff9999] drop-shadow-[0_0_5px_rgba(255,0,0,0.8)]' : 'text-white/90'}`}>
+                    <button
+                      disabled={inst.state !== 'STOPPED'}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setInstances(prev => prev.map(i => i.id === inst.id ? { ...i, state: 'RUNNING' } : i));
+                        if (onLog) onLog(`[SYS] Powering on instance: ${inst.id}...`);
+                      }}
+                      className={`p-1 rounded-full transition-colors ${
+                        inst.state === 'STOPPED' 
+                          ? 'text-[hsl(var(--success))] hover:bg-[hsl(var(--success)/0.2)] hover:shadow-[0_0_8px_hsl(var(--success))] cursor-pointer' 
+                          : 'text-white/20 cursor-not-allowed'
+                      }`}
+                      title={inst.state === 'STOPPED' ? "Power On" : ""}
+                    >
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M18.36 6.64a9 9 0 1 1-12.73 0"></path>
+                        <line x1="12" y1="2" x2="12" y2="12"></line>
+                      </svg>
+                    </button>
                     {inst.id}
                   </td>
                   <td className="px-4 py-3 text-white/60">{inst.type}</td>
