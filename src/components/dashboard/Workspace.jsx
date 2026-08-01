@@ -275,12 +275,21 @@ export default function Workspace({ activeService, emergencyPhase, onLog }) {
                           // Threat Artifact Detected
                         </span>
                         <a 
-                          href="/audit_dump.log" 
-                          download="audit_dump.log"
-                          onClick={() => {
+                          href={selectedInstance.state === 'STOPPED' ? undefined : "/audit_dump.log"}
+                          download={selectedInstance.state === 'STOPPED' ? undefined : "audit_dump.log"}
+                          onClick={(e) => {
+                            if (selectedInstance.state === 'STOPPED') {
+                              e.preventDefault();
+                              if (onLog) onLog(`[ERR] Operation failed: Target instance is currently OFFLINE.`);
+                              return;
+                            }
                             if (onLog) onLog(`[SEC-CRITICAL] Malicious payload downloaded from target: ${selectedInstance.id}`);
                           }}
-                          className="inline-flex items-center gap-2 bg-[hsl(var(--danger)/0.1)] border border-[hsl(var(--danger))] text-[hsl(var(--danger))] px-3 py-1.5 text-xs hover:bg-[hsl(var(--danger))] hover:text-black transition-colors cursor-pointer font-bold"
+                          className={`inline-flex items-center gap-2 px-3 py-1.5 text-xs font-bold transition-colors ${
+                            selectedInstance.state === 'STOPPED'
+                              ? 'bg-[hsl(var(--danger)/0.05)] border border-[hsl(var(--danger)/0.3)] text-[hsl(var(--danger)/0.5)] cursor-not-allowed'
+                              : 'bg-[hsl(var(--danger)/0.1)] border border-[hsl(var(--danger))] text-[hsl(var(--danger))] hover:bg-[hsl(var(--danger))] hover:text-black cursor-pointer'
+                          }`}
                         >
                           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                             <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
