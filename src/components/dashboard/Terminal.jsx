@@ -29,7 +29,7 @@ export default function Terminal({ logs = [], onLog }) {
             onLog(msg); // Log imediato na conexão
             intervalRef.current = setInterval(() => {
               onLog(msg);
-            }, 180000); // Repete a cada 3 minutos (180.000 ms)
+            }, 300000); // Repete a cada 5 minutos (300.000 ms)
           }
         }
       } catch (e) {

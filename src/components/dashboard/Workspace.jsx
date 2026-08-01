@@ -16,6 +16,7 @@ const getStateStyle = (state) => {
   switch(state) {
     case 'RUNNING': return 'text-[hsl(var(--success))] border-[hsl(var(--success)/0.3)] bg-[hsl(var(--success)/0.1)]';
     case 'STARTING': 
+    case 'INITIALIZING':
     case 'PROVISIONING': return 'text-[hsl(var(--primary))] border-[hsl(var(--primary)/0.3)] bg-[hsl(var(--primary)/0.1)] animate-pulse';
     case 'STOPPING': 
     case 'TERMINATING': return 'text-yellow-400 border-yellow-400/30 bg-yellow-400/10 animate-pulse';
@@ -69,7 +70,7 @@ const generateInstanceDetails = (inst) => {
   };
 };
 
-export default function Workspace({ activeService, emergencyPhase, onLog }) {
+export default function Workspace({ activeService, emergencyPhase, onLog, onEmergencyLifted }) {
   const [instances, setInstances] = useState(INITIAL_INSTANCES);
   const [selectedInstance, setSelectedInstance] = useState(null);
   const [mlActivated, setMlActivated] = useState(false);
@@ -85,6 +86,15 @@ export default function Workspace({ activeService, emergencyPhase, onLog }) {
       ));
     }
   }, [emergencyPhase]);
+
+  useEffect(() => {
+    if (emergencyPhase === 'STOPPED') {
+      const allRunning = instances.every(inst => inst.state === 'RUNNING');
+      if (allRunning && onEmergencyLifted) {
+        onEmergencyLifted();
+      }
+    }
+  }, [instances, emergencyPhase, onEmergencyLifted]);
 
   useEffect(() => {
     if (!activeService || activeService.id !== 1) return;
@@ -209,8 +219,13 @@ export default function Workspace({ activeService, emergencyPhase, onLog }) {
                       disabled={inst.state !== 'STOPPED'}
                       onClick={(e) => {
                         e.stopPropagation();
-                        setInstances(prev => prev.map(i => i.id === inst.id ? { ...i, state: 'RUNNING' } : i));
-                        if (onLog) onLog(`[SYS] Powering on instance: ${inst.id}...`);
+                        setInstances(prev => prev.map(i => i.id === inst.id ? { ...i, state: 'INITIALIZING' } : i));
+                        if (onLog) onLog(`[SYS] Initializing instance: ${inst.id}...`);
+                        
+                        setTimeout(() => {
+                          setInstances(currentPrev => currentPrev.map(i => i.id === inst.id ? { ...i, state: 'RUNNING' } : i));
+                          if (onLog) onLog(`[OK] Instance ${inst.id} is now RUNNING.`);
+                        }, 15000);
                       }}
                       className={`p-1 rounded-full transition-colors ${
                         inst.state === 'STOPPED' 

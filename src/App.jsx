@@ -62,11 +62,7 @@ function App() {
         `[SEC] All target nodes confirmed HALTED.`,
         `[SYS] Cluster locked. Awaiting safety clearance...`
       ]);
-      
-      const timer = setTimeout(() => {
-        setEmergencyPhase('NONE');
-      }, 60000);
-      return () => clearTimeout(timer);
+      // The system now remains permanently locked in STOPPED state until manual intervention (if any)
       
     } else if (emergencyPhase === 'NONE' && !isInitialMount.current) {
       setLogs(prev => [
@@ -197,7 +193,12 @@ function App() {
         />
 
         <div className="flex-1 flex flex-col overflow-hidden relative">
-          <Workspace activeService={activeService} emergencyPhase={emergencyPhase} onLog={addLog} />
+          <Workspace 
+            activeService={activeService} 
+            emergencyPhase={emergencyPhase} 
+            onLog={addLog} 
+            onEmergencyLifted={() => setEmergencyPhase('NONE')}
+          />
           <Terminal logs={logs} onLog={addLog} />
         </div>
       </div>
