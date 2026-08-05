@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import LoginModal from './LoginModal';
 
-export default function Topbar({ onLog }) {
+export default function Topbar({ onLog, aiMode }) {
   const [latency, setLatency] = useState(12);
   const [showLogin, setShowLogin] = useState(false);
 
@@ -38,11 +38,16 @@ export default function Topbar({ onLog }) {
             <span className="text-white/80">LAT: {latency}ms</span>
           </div>
           <button 
+            disabled={aiMode}
             onClick={() => {
               setShowLogin(true);
               if (onLog) onLog('[SEC] Authentication portal requested via Admin panel.');
             }}
-            className="hidden sm:block px-3 py-1 bg-black border border-[hsl(var(--primary)/0.5)] text-[hsl(var(--primary))] uppercase hover:bg-[hsl(var(--primary))] hover:text-black transition-colors duration-0 cursor-pointer"
+            className={`hidden sm:block px-3 py-1 bg-black border border-[hsl(var(--primary)/0.5)] text-[hsl(var(--primary))] uppercase transition-colors duration-0 ${
+              aiMode 
+                ? 'opacity-30 cursor-not-allowed' 
+                : 'hover:bg-[hsl(var(--primary))] hover:text-black cursor-pointer'
+            }`}
           >
             Admin
           </button>

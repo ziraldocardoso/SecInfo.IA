@@ -15,6 +15,13 @@
     --danger: 330 100% 50%; /* #ff007f - Magenta */
   }
 
+  .ai-theme {
+    --primary: 45 100% 50%; /* Gold */
+    --foreground: 45 100% 50%; /* Gold */
+    --danger: 280 100% 60%; /* Purple */
+    --success: 180 100% 50%; /* Cyan becomes success */
+  }
+
   body {
     background-color: hsl(var(--background));
     color: hsl(var(--foreground));

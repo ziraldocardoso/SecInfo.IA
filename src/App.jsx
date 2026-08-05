@@ -3,6 +3,7 @@ import Topbar from './components/layout/Topbar';
 import Sidebar from './components/layout/Sidebar';
 import Workspace from './components/dashboard/Workspace';
 import Terminal from './components/dashboard/Terminal';
+import AttackModal, { HACKER_IPS } from './components/dashboard/AttackModal';
 
 const SERVICES = [
   { id: 1, name: 'Neon-Compute Nodes' },
@@ -15,14 +16,49 @@ function App() {
   const [isFailing, setIsFailing] = useState(false);
   const [ufo, setUfo] = useState({ visible: false, top: 0, duration: 4 });
   const [hackerVisible, setHackerVisible] = useState(false);
-  const [activeTabId, setActiveTabId] = useState(1);
-  const [emergencyPhase, setEmergencyPhase] = useState('NONE');
+  const [activeTabId, setActiveTabId] = useState(() => {
+    const saved = localStorage.getItem('secinfo_activeTabId');
+    return saved ? parseInt(saved, 10) : 1;
+  });
+  const [emergencyPhase, setEmergencyPhase] = useState(() => {
+    return localStorage.getItem('secinfo_emergencyPhase') || 'NONE';
+  });
+  const [aiMode, setAiMode] = useState(() => {
+    return localStorage.getItem('secinfo_aiMode') === 'true';
+  });
+  const [showAttackModal, setShowAttackModal] = useState(false);
   
-  const [logs, setLogs] = useState([
-    "[SYS] Initializing core modules...",
-    "[OK]  Module 'Neurolink' loaded.",
-    "[SYS] System ready. Awaiting commands..."
-  ]);
+  const [logs, setLogs] = useState(() => {
+    const saved = localStorage.getItem('secinfo_logs');
+    if (saved) {
+      try {
+        return JSON.parse(saved);
+      } catch (e) {
+        // Fallback
+      }
+    }
+    return [
+      "[SYS] Initializing core modules...",
+      "[OK]  Module 'Neurolink' loaded.",
+      "[SYS] System ready. Awaiting commands..."
+    ];
+  });
+
+  useEffect(() => {
+    localStorage.setItem('secinfo_activeTabId', activeTabId);
+  }, [activeTabId]);
+
+  useEffect(() => {
+    localStorage.setItem('secinfo_emergencyPhase', emergencyPhase);
+  }, [emergencyPhase]);
+
+  useEffect(() => {
+    localStorage.setItem('secinfo_aiMode', aiMode);
+  }, [aiMode]);
+
+  useEffect(() => {
+    localStorage.setItem('secinfo_logs', JSON.stringify(logs));
+  }, [logs]);
   
   const isInitialMount = useRef(true);
 
@@ -144,12 +180,51 @@ function App() {
     return () => clearTimeout(timeoutId);
   }, []);
 
+  useEffect(() => {
+    if (!aiMode) return;
+    
+    let timeoutId;
+    const scheduleAILog = () => {
+      const randomIp = HACKER_IPS[Math.floor(Math.random() * HACKER_IPS.length)];
+      
+      const attempts = [
+        `[CRITICAL] SQL Injection payload detected from host ${randomIp}.`,
+        `[WARN] Privilege escalation attempt (PID 9942) origin: ${randomIp}.`,
+        `[ALERT] Brute force attack incoming from ${randomIp} on Port 22 - SSH.`,
+        `[CRITICAL] Unauthorized lateral movement originated by host ${randomIp}.`,
+        `[WARN] Malware signature matched from remote IP ${randomIp}.`
+      ];
+      const countermeasures = [
+        `[AI-DEFENSE] Payload from ${randomIp} intercepted by NeuralNet WAF. Threat neutralized.`,
+        `[AI-DEFENSE] Host ${randomIp} sandboxed and connection terminated via heuristic analysis.`,
+        `[AI-DEFENSE] Source IP ${randomIp} dynamically banned. Traffic routed to honeypot.`,
+        `[AI-DEFENSE] Threat from ${randomIp} contained. Subnet isolated successfully.`,
+        `[AI-DEFENSE] Packets from ${randomIp} quarantined automatically. Vector neutralized.`
+      ];
+      
+      const nextTime = Math.floor(Math.random() * 8000) + 4000;
+      
+      timeoutId = setTimeout(() => {
+        const randIndex = Math.floor(Math.random() * attempts.length);
+        setLogs(prev => [...prev, attempts[randIndex]]);
+        
+        setTimeout(() => {
+          setLogs(prev => [...prev, countermeasures[randIndex]]);
+          scheduleAILog();
+        }, 1500);
+      }, nextTime);
+    };
+    
+    scheduleAILog();
+    return () => clearTimeout(timeoutId);
+  }, [aiMode]);
+
   const addLog = (msg) => {
     setLogs(prev => [...prev, msg]);
   };
 
   return (
-    <div className={`h-screen w-screen overflow-hidden bg-black flex flex-col font-sans selection:bg-[hsl(var(--primary)/0.3)] text-white ${isFailing ? 'tv-fail-effect' : ''}`}>
+    <div className={`h-screen w-screen overflow-hidden bg-black flex flex-col font-sans selection:bg-[hsl(var(--primary)/0.3)] text-white ${isFailing ? 'tv-fail-effect' : ''} ${aiMode ? 'ai-theme' : ''}`}>
       <div className="fixed inset-0 z-[9999] bg-black text-white flex flex-col items-center justify-center p-8 text-center md:hidden crt-flicker">
         <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="hsl(var(--danger))" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="mb-6 opacity-80">
           <rect x="5" y="2" width="14" height="20" rx="2" ry="2"></rect>
@@ -180,7 +255,7 @@ function App() {
           </svg>
         </div>
       )}
-      <Topbar onLog={addLog} />
+      <Topbar onLog={addLog} aiMode={aiMode} />
 
       <div className="flex-1 flex overflow-hidden">
         <Sidebar 
@@ -190,6 +265,8 @@ function App() {
           onEmergencyHalt={handleEmergencyHalt}
           onRedundantHalt={() => addLog('[WARN] Ignored redundant EMERGENCY HALT command. Protocol already active.')}
           emergencyPhase={emergencyPhase}
+          aiMode={aiMode}
+          onOpenAttackModal={() => setShowAttackModal(true)}
         />
 
         <div className="flex-1 flex flex-col overflow-hidden relative">
@@ -198,10 +275,35 @@ function App() {
             emergencyPhase={emergencyPhase} 
             onLog={addLog} 
             onEmergencyLifted={() => setEmergencyPhase('NONE')}
+            onAiModeActivate={() => setAiMode(true)}
+            onAiModeDeactivate={() => {
+              setAiMode(false);
+              setEmergencyPhase('NONE');
+              setActiveTabId(1);
+              setLogs([
+                "[SYS] Initializing core modules...",
+                "[OK]  Module 'Neurolink' loaded.",
+                "[SYS] System ready. Awaiting commands..."
+              ]);
+              localStorage.removeItem('secinfo_aiMode');
+              localStorage.removeItem('secinfo_emergencyPhase');
+              localStorage.removeItem('secinfo_activeTabId');
+              localStorage.removeItem('secinfo_logs');
+              localStorage.removeItem('secinfo_mlActivated');
+              localStorage.removeItem('secinfo_threatNeutralized');
+            }}
+            aiMode={aiMode}
           />
           <Terminal logs={logs} onLog={addLog} />
         </div>
       </div>
+
+      {showAttackModal && (
+        <AttackModal 
+          onClose={() => setShowAttackModal(false)}
+          onLog={addLog}
+        />
+      )}
     </div>
   );
 }

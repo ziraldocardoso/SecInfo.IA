@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-export default function Sidebar({ services, activeTabId, setActiveTabId, onEmergencyHalt, onRedundantHalt, emergencyPhase }) {
+export default function Sidebar({ services, activeTabId, setActiveTabId, onEmergencyHalt, onRedundantHalt, emergencyPhase, aiMode, onOpenAttackModal }) {
   const [showConfirm, setShowConfirm] = useState(false);
 
   const isInEmergency = emergencyPhase !== 'NONE';
@@ -34,15 +34,19 @@ export default function Sidebar({ services, activeTabId, setActiveTabId, onEmerg
         <div className="p-4 border-t border-[hsl(var(--primary)/0.3)] mt-auto">
           <div 
             onClick={() => {
-              setShowConfirm(true);
-              if (isInEmergency && onRedundantHalt) {
-                onRedundantHalt();
+              if (aiMode) {
+                if (onOpenAttackModal) onOpenAttackModal();
+              } else {
+                setShowConfirm(true);
+                if (isInEmergency && onRedundantHalt) {
+                  onRedundantHalt();
+                }
               }
             }}
             className="group danger-border bg-[hsl(var(--danger)/0.1)] p-3 text-center cursor-pointer hover:bg-[hsl(var(--danger))] transition-colors duration-0"
           >
             <span className="uppercase text-xs font-bold tracking-widest text-[hsl(var(--danger))] group-hover:text-white">
-              Emergency Halt
+              {aiMode ? 'To Attack Hackers' : 'Emergency Halt'}
             </span>
           </div>
         </div>
